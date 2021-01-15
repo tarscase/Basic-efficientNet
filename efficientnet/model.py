@@ -37,6 +37,7 @@ from keras_applications.imagenet_utils import preprocess_input as _preprocess_in
 
 from . import get_submodules_from_kwargs
 from .weights import IMAGENET_WEIGHTS_PATH, IMAGENET_WEIGHTS_HASHES, NS_WEIGHTS_HASHES, NS_WEIGHTS_PATH
+from .Lambda import LambdaLayer
 
 backend = None
 layers = None
@@ -158,7 +159,7 @@ def round_repeats(repeats, depth_coefficient):
     return int(math.ceil(depth_coefficient * repeats))
 
 
-def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix='', ):
+def mb_conv_block(inputs, block_args, activation,r=23, dim_k=16, heads = 4, dim_u=4,  drop_rate=None, prefix='', ):
     """Mobile Inverted Residual Bottleneck."""
 
     has_se = (block_args.se_ratio is not None) and (0 < block_args.se_ratio <= 1)
@@ -184,7 +185,7 @@ def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix='', ):
         x = layers.Activation(activation, name=prefix + 'expand_activation')(x)
     else:
         x = inputs
-
+    '''
     # Depthwise Convolution
     x = layers.DepthwiseConv2D(block_args.kernel_size,
                                strides=block_args.strides,
@@ -194,7 +195,17 @@ def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix='', ):
                                name=prefix + 'dwconv')(x)
     x = layers.BatchNormalization(axis=bn_axis, name=prefix + 'bn')(x)
     x = layers.Activation(activation, name=prefix + 'activation')(x)
-
+    '''
+    #Lambda convulution
+    
+    x = LambdaLayer(dim_out = filters,
+                    r = r,
+                    dim_k = dim_k,
+                    heads = heads,
+                    dim_u = dim_u)
+    x = layers.BatchNormalization(axis=bn_axis, name=prefix + 'bn')(x)
+    x = layers.Activation(activation, name=prefix + 'activation')(x)
+    
     # Squeeze and Excitation phase
     if has_se:
         num_reduced_filters = max(1, int(
@@ -258,6 +269,10 @@ def EfficientNet(width_coefficient,
                  input_tensor=None,
                  input_shape=None,
                  pooling=None,
+                 r=23,
+                 dim_k=16,
+                 heads = 4,
+                 dim_u=4,
                  classes=1000,
                  **kwargs):
     """Instantiates the EfficientNet architecture using given scaling coefficients.
@@ -369,6 +384,10 @@ def EfficientNet(width_coefficient,
         x = mb_conv_block(x, block_args,
                           activation=activation,
                           drop_rate=drop_rate,
+                          r=23,
+                          dim_k=16,
+                          heads = 4,
+                          dim_u=4,
                           prefix='block{}a_'.format(idx + 1))
         block_num += 1
         if block_args.num_repeat > 1:
@@ -385,6 +404,10 @@ def EfficientNet(width_coefficient,
                 x = mb_conv_block(x, block_args,
                                   activation=activation,
                                   drop_rate=drop_rate,
+                                  r=23, 
+                                  dim_k=16, 
+                                  heads = 4, 
+                                  dim_u=4,
                                   prefix=block_prefix)
                 block_num += 1
 
