@@ -1,5 +1,3 @@
-# Copyright 2019 The TensorFlow Authors, Pavel Yakubovskiy, Björn Barz. All Rights Reserved.
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -19,9 +17,6 @@
   ICML'19, https://arxiv.org/abs/1905.11946
 """
 
-# Code of this model implementation is mostly written by
-# Björn Barz ([@Callidior](https://github.com/Callidior))
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -37,7 +32,7 @@ from keras_applications.imagenet_utils import preprocess_input as _preprocess_in
 
 from . import get_submodules_from_kwargs
 from .weights import IMAGENET_WEIGHTS_PATH, IMAGENET_WEIGHTS_HASHES, NS_WEIGHTS_HASHES, NS_WEIGHTS_PATH
-from .Lambda import LambdaLayer
+from .lambda import LambdaLayer
 
 backend = None
 layers = None
