@@ -12,7 +12,7 @@ NAME = "lambda_efficientnet"
 DESCRIPTION = "EfficientNet model with Labda layer. Keras and TensorFlow Keras."
 URL = "https://github.com/tarscase/Basic-efficientNet"
 EMAIL = "tarscas@gmail.com"
-AUTHOR = "Abhijit Naik
+AUTHOR = "Abhijit Naik"
 REQUIRES_PYTHON = ">=3.0.0"
 VERSION = None
 
